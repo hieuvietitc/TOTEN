@@ -1,0 +1,26 @@
+{
+  "name": "@toten/match-service",
+  "version": "0.1.0",
+  "description": "Match recording and tracking microservice",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "ts-node src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "test": "jest"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "pg": "^8.9.0",
+    "dotenv": "^16.0.3",
+    "uuid": "^9.0.0",
+    "cors": "^2.8.5",
+    "axios": "^1.3.4"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.17",
+    "@types/node": "^18.15.10",
+    "typescript": "^5.0.2",
+    "ts-node": "^10.9.1"
+  }
+}
