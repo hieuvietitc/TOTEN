@@ -1,0 +1,79 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: toten-postgres
+    environment:
+      POSTGRES_USER: toten
+      POSTGRES_PASSWORD: toten_dev_password
+      POSTGRES_DB: toten_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - toten-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U toten"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: toten-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - toten-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # MinIO (S3-compatible object storage for Data Lake)
+  minio:
+    image: minio/minio:latest
+    container_name: toten-minio
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin_password
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_data:/data
+    networks:
+      - toten-network
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Nginx API Gateway
+  nginx:
+    image: nginx:alpine
+    container_name: toten-nginx
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    networks:
+      - toten-network
+    depends_on:
+      - postgres
+      - redis
+
+volumes:
+  postgres_data:
+  minio_data:
+
+networks:
+  toten-network:
+    driver: bridge

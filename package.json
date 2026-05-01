@@ -1,0 +1,21 @@
+{
+  "name": "toten",
+  "version": "0.1.0",
+  "description": "TOTEN - AI Operating System for Tennis Ecosystem",
+  "private": true,
+  "scripts": {
+    "install-all": "npm install && npm --prefix apps/web-admin install && npm --prefix services/user-service install",
+    "dev": "docker-compose -f infra/docker-compose.yml up -d",
+    "dev:down": "docker-compose -f infra/docker-compose.yml down",
+    "test": "echo 'Run tests'",
+    "build": "echo 'Build project'"
+  },
+  "keywords": [
+    "tennis",
+    "sports",
+    "ai",
+    "ecosystem"
+  ],
+  "author": "Vietnam Tennis Federation",
+  "license": "PROPRIETARY"
+}
