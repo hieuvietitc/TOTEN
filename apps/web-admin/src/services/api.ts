@@ -46,7 +46,7 @@ export const membershipApi = {
   stats: () => api.get('/membership/stats'),
 };
 
-// Clubs
+// Clubs — served by user-service at /users/clubs
 export const clubsApi = {
   list: (params?: { limit?: number; offset?: number; city?: string }) =>
     api.get('/users/clubs', { params }),
@@ -56,35 +56,37 @@ export const clubsApi = {
 // Bookings
 export const bookingApi = {
   list: (params?: Record<string, unknown>) => api.get('/booking', { params }),
-  stats: (courtId: string) => api.get(`/booking/court/${courtId}/stats`),
+  // backend route: GET /booking/stats/overview (no per-court stats endpoint)
+  stats: () => api.get('/booking/stats/overview'),
 };
 
 // Matches
 export const matchApi = {
+  // GET / is aliased to recent list in match-service
   list: (params?: Record<string, unknown>) => api.get('/matches', { params }),
   playerStats: (userId: string) => api.get(`/matches/player/${userId}/stats`),
 };
 
-// Ranking
+// Ranking — corrected paths
 export const rankingApi = {
   leaderboard: (params?: { limit?: number; city?: string }) =>
-    api.get('/ranking/leaderboard', { params }),
-  playerRating: (userId: string) => api.get(`/ranking/player/${userId}/rating`),
+    api.get('/ranking/leaderboard/top', { params }),
+  playerRating: (userId: string) => api.get(`/ranking/rating/${userId}`),
 };
 
 // Tournaments
 export const tournamentApi = {
   list: (params?: Record<string, unknown>) => api.get('/tournaments', { params }),
   getById: (id: string) => api.get(`/tournaments/${id}`),
-  stats: () => api.get('/tournaments/stats'),
+  stats: (id: string) => api.get(`/tournaments/${id}/stats`),
 };
 
-// Fraud
+// Fraud — resolve uses PUT (backend route is PUT /alerts/:id/resolve)
 export const fraudApi = {
   alerts: (params?: { status?: string; severity?: string; limit?: number }) =>
     api.get('/fraud/alerts', { params }),
   resolve: (id: string, resolution: string) =>
-    api.post(`/fraud/alerts/${id}/resolve`, { resolution }),
+    api.put(`/fraud/alerts/${id}/resolve`, { resolution }),
   userHistory: (userId: string) => api.get(`/fraud/player/${userId}/history`),
 };
 
@@ -94,20 +96,20 @@ export const sponsorApi = {
   report: (id: string) => api.get(`/sponsors/${id}/report`),
 };
 
-// Finance
+// Finance — corrected paths
 export const financeApi = {
   summary: (params?: { start_date?: string; end_date?: string }) =>
-    api.get('/finance/summary', { params }),
-  dailyTrend: (days?: number) => api.get('/finance/trend', { params: { days } }),
+    api.get('/finance/pl', { params }),
+  dailyTrend: (days?: number) => api.get('/finance/revenue/daily', { params: { days } }),
   alerts: () => api.get('/finance/alerts'),
 };
 
-// Control Tower
+// Control Tower — corrected kpi path
 export const controlTowerApi = {
   daily: () => api.get('/control-tower/daily'),
   snapshot: () => api.get('/control-tower/snapshot'),
   clubLeaderboard: () => api.get('/control-tower/clubs/leaderboard'),
-  kpiAlerts: () => api.get('/control-tower/kpi-alerts'),
+  kpiAlerts: () => api.get('/control-tower/kpi/alerts'),
   recommendations: () => api.get('/control-tower/recommendations'),
   dashboard: () => api.get('/control-tower/dashboard'),
 };

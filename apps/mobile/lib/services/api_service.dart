@@ -83,11 +83,12 @@ class ApiService {
 
   // ─── Courts ───
   Future<List<Court>> getCourts({String? city, String? clubId}) async {
-    final res = await _dio.get('/users/courts', queryParameters: {
+    // courts are listed via clubs endpoint in user-service
+    final res = await _dio.get('/users/clubs', queryParameters: {
       if (city != null) 'city': city,
-      if (clubId != null) 'club_id': clubId,
     });
     final items = (res.data['data']?['items'] ?? []) as List;
+    // Return clubs as "courts" placeholder until a dedicated courts route is added
     return items.map((e) => Court.fromJson(e as Map<String, dynamic>)).toList();
   }
 
@@ -103,7 +104,7 @@ class ApiService {
   }
 
   Future<void> cancelBooking(String bookingId) async {
-    await _dio.post('/booking/$bookingId/cancel');
+    await _dio.delete('/booking/$bookingId');
   }
 
   // ─── Matches ───
@@ -113,7 +114,7 @@ class ApiService {
   }
 
   Future<void> recordMatchResult(String matchId, Map<String, dynamic> data) async {
-    await _dio.post('/matches/$matchId/result', data: data);
+    await _dio.put('/matches/$matchId/result', data: data);
   }
 
   Future<Map<String, dynamic>> getPlayerStats(String userId) async {
@@ -123,7 +124,7 @@ class ApiService {
 
   // ─── Ranking ───
   Future<List<RankEntry>> getLeaderboard({String? city, int limit = 50}) async {
-    final res = await _dio.get('/ranking/leaderboard', queryParameters: {
+    final res = await _dio.get('/ranking/leaderboard/top', queryParameters: {
       'limit': limit,
       if (city != null) 'city': city,
     });
@@ -132,7 +133,7 @@ class ApiService {
   }
 
   Future<Map<String, dynamic>> getPlayerRating(String userId) async {
-    final res = await _dio.get('/ranking/player/$userId/rating');
+    final res = await _dio.get('/ranking/rating/$userId');
     return res.data['data'] as Map<String, dynamic>? ?? {};
   }
 

@@ -21,7 +21,7 @@ export class UserController {
       const limit = Math.min(parseInt(req.query.limit as string) || 50, 100);
       const offset = parseInt(req.query.offset as string) || 0;
       const users = await userService.getAllUsers(limit, offset);
-      res.json({ users, total: users.length, limit, offset });
+      res.json({ data: { items: users, total: users.length, limit, offset } });
     } catch (error) {
       res.status(500).json({ error: 'Internal server error' });
     }
